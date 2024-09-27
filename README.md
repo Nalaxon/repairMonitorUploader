@@ -5,7 +5,7 @@ An python script that allows you to upload excel sheets (xlsx, in the following 
 
 ## Run Linux / Mac / Windows
 1. configure in `config.py` like file to upload, date of repair cafe, language, ...
-2. create .credentials/auth.yml` if not existing already, and put your password and your username (see example blow)
+2. create `.credentials/auth.yml` if not existing already, and put your password and your username (see example blow)
 This will upload `RepMon -DataSource.xlsx` to repairmonitor.org as the user given in `.credentials/auth.yml` with the date given in
 3. Run in terminal: `pipenv run python driver.py` or double click upload.bat
 In order to make upload.bat work you have to make sure that python and pipenv is in your PATH variable `echo %PATH%`
