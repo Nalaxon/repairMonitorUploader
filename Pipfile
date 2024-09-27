@@ -21,6 +21,7 @@ tzdata = "==2024.1"
 urllib3 = "==2.2.1"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.10"
