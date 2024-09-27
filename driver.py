@@ -1,6 +1,6 @@
-import config as config
+import config as conf
 from rp_adapter import Repairmonitor
-from excel_read import Excel_Reader
+from excel_read import ExcelReader
 
 # ### do not edit
 # languages_supported = ['en', 'de', 'nl', 'fr']
@@ -27,9 +27,9 @@ from excel_read import Excel_Reader
 
 rpa = Repairmonitor()
 rpa.login_in()
-data_reader = Excel_Reader(config)
+data_reader = ExcelReader(conf)
 
 for i, json in enumerate(data_reader.generate_json(rpa.get_add_repair_page_data)):
-        print('process line ' + str(i))
-        print(str(json))
-        rpa.post_add_repair_with_data(config.lang, json)
+    print('process line ' + str(i))
+    print(str(json))
+    rpa.post_add_repair_with_data(conf.LANG, json)

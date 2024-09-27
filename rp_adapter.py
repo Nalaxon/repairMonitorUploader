@@ -1,20 +1,25 @@
 import requests
 from lxml import html
 import yaml
-import http.client as http_client
-import logging
+
+# Uncomment if you need to log your requests
+# import http.client as http_client
+# import logging
 
 def try_(requests_data, expected_status_code = 200):
+    ''' Utility to encapsulate http error handling '''
     if requests_data.status_code != expected_status_code:
         print('Hmm, something went wrong by interacting with ' + requests_data.url)
     return requests_data
 
 def parse_opt_dict(tree, xpath):
+    ''' Utility to parse Joomla options '''
     options = tree.xpath(xpath)
     opt_dict = {option.text:option.get('value') for option in options}
     return opt_dict
 
 class Repairmonitor:
+    """ Class to interact with repair montor Joomla forms """
 
     def __init__(self):
         self.session = None
@@ -28,20 +33,21 @@ class Repairmonitor:
         # requests_log.propagate = True
 
     def login_in(self):
+        ''' login with ./credential/auth.yml defined credentials '''
         self.session = requests.Session()
-        tree = html.fromstring(try_(requests.get('https://www.repairmonitor.org/')).content)
+        tree = html.fromstring(try_(self.session.get('https://www.repairmonitor.org/')).content)
         secrete = tree.xpath('//input[@name="form_build_id"]/@value')[0]
         password = ''
         user = ''
 
-        with open(".credentials/auth.yml", 'r') as stream:
+        with open(".credentials/auth.yml", 'r', encoding="utf-8") as stream:
             try:
                 credentials = yaml.safe_load(stream)
                 password = credentials['password']
                 user = credentials['user']
             except yaml.YAMLError as exc:
-                print('Could not read .credentials/auth.yml!\n' + excs)
-                exit
+                print('Could not read .credentials/auth.yml!\n' + exc)
+                exit(1)
 
         payload = {'name' : user, 'pass': password, 'form_build_id':secrete, 'form_id':'user_login_form', 'op':'log+in'}
 
@@ -53,10 +59,12 @@ class Repairmonitor:
 
 
     def get_page_tree(self, url):
+        ''' get parseable content of site '''
         page = try_(self.session.get(url))
         return html.fromstring(page.content)
 
     def get_add_repair_page_data(self, lang):
+        ''' Fetch data required to interact with the form '''
         url = 'https://www.repairmonitor.org/' + lang + '/node/add/repair'
         print('get ' + url)
         new_repair_tree = self.get_page_tree(url)
@@ -80,6 +88,7 @@ class Repairmonitor:
         }
 
     def post_add_repair_with_data(self, lang, data):
+        ''' Add the repair to either drafts or completed repairs '''
         url = 'https://www.repairmonitor.org/' + lang + '/node/add/repair'
         # print(str(data))
         try_(self.session.post(url, data=data))
