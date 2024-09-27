@@ -10,18 +10,20 @@ from excel_adapter import mapping, product_repaired_from_key, field_repair_faile
 
 class Excel_Reader:
 
-        def __init__(self, lang, lang_specific, data_file_path, header=8):
+        def __init__(self, config):
                 self.df = None
-                self.lang = lang
-                self.lang_specific = lang_specific(lang)
-                self.df = pandas.read_excel(data_file_path, header=header)
+                self.lang = config.lang
+                self.lang_specific = config.get_lang_specific(config.lang)
+                self.df = pandas.read_excel(config.data_file_path, header=config.excel_skip_header)
                 self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
+                self.repair_date = config.repair_date
+                self.operation = config.operation
 
         def generate_json(self, get_page_data):
                 for index, row in self.df.iterrows():
                         page_data = get_page_data(self.lang)
-                        template_op = self.lang_specific['Save+draft']
-                        template_date = '2024-05-09'
+                        template_op = self.lang_specific[self.operation]
+                        template_date = self.repair_date
                         # print(str(mapping['field_repair_failed']) + ':' + str(row.get(mapping['field_repair_failed'])) + ':')
                         # print(str(field_repair_failed_adapter(page_data['field_repair_failed'], get(row,mapping['field_repair_failed']), '_none')))
                         # yield {
