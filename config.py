@@ -1,3 +1,5 @@
+""" Configuration file, set your settings here"""
+
 ### configure here
 # your language
 LANG = 'de'

@@ -1,3 +1,6 @@
+"""" Interaction with repair monitor """
+
+import sys
 import requests
 from lxml import html
 import yaml
@@ -47,14 +50,21 @@ class Repairmonitor:
                 user = credentials['user']
             except yaml.YAMLError as exc:
                 print('Could not read .credentials/auth.yml!\n' + exc)
-                exit(1)
+                sys.exit(1)
 
-        payload = {'name' : user, 'pass': password, 'form_build_id':secrete, 'form_id':'user_login_form', 'op':'log+in'}
+        payload = {
+            'name':user,
+            'pass':password,
+            'form_build_id':secrete,
+            'form_id':'user_login_form',
+            'op':'log+in'
+            }
 
-        try_(self.session.post('https://www.repairmonitor.org/en/node/61?destination=/en/node/61', data = payload))
+        try_(self.session.post('https://www.repairmonitor.org/en/node/61?destination=/en/node/61',
+                               data = payload))
 
-        overview_page = try_(self.session.get('https://www.repairmonitor.org/en/node/61?check_logged_in=1'))
-        print(overview_page.content)
+        #overview_page = try_(self.session.get('https://www.repairmonitor.org/en/node/61?check_logged_in=1'))
+        #print(overview_page.content)
     # we are in :)
 
 
@@ -74,8 +84,10 @@ class Repairmonitor:
 
         categories = {}
         repair_failed = {}
-        categories = parse_opt_dict(new_repair_tree, '//select[@id="edit-field-categorie"]/option')
-        repair_failed = parse_opt_dict(new_repair_tree, '//select[@id="edit-field-repair-failed"]/option')
+        categories = parse_opt_dict(new_repair_tree,
+                                    '//select[@id="edit-field-categorie"]/option')
+        repair_failed = parse_opt_dict(new_repair_tree,
+                                       '//select[@id="edit-field-repair-failed"]/option')
 
         # print(str(repair_failed))
 
@@ -119,4 +131,3 @@ class Repairmonitor:
 # 'field_hint[0]["value"]':'',
 # 'op':'Save+draft',
 # 'advanced__active_tab'='edit-revision-information'
-
