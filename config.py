@@ -6,9 +6,9 @@ LANG = 'de'
 # time when repaire cafe took place (please not the format: YYYY-MM-DD)
 REPAIR_DATE = '2024-05-09'
 # file you want to upload (expects full path if not in same folder
-DATA_FILE_PATH = 'RepMon -DatenSource.xlsx'
+DATA_FILE_PATH = 'RepMon -DatenSource2.xlsx'
 # in excel file header starts in line skip_header
-EXCEL_SKIP_HEADER=8
+EXCEL_SKIP_HEADER=9
 # save your excel into draft so you can review what the uploader created
 OPERATION = 'Save+draft'
 
@@ -25,6 +25,9 @@ if LANG not in languages_supported:
 
 if OPERATION not in operations_supported:
     print("Following operations allowed only: " + ','.join(languages_supported))
+
+if EXCEL_SKIP_HEADER <= 0:
+    print("EXCEL_SKIP_HEADER requires to be an positiv number. 1 means no rows are skipped. Unless you really don't require any mapping you always need to skip at least one row!")
 
 
 def get_lang_specific(lang):

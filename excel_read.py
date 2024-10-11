@@ -18,7 +18,7 @@ class ExcelReader:
         self.df = None
         self.lang = config.LANG
         self.lang_specific = config.get_lang_specific(config.LANG)
-        self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER)
+        self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1)
         self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
         self.repair_date = config.REPAIR_DATE
         self.operation = config.OPERATION
