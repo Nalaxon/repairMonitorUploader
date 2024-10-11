@@ -1,5 +1,7 @@
 """ Use this file for you excel specific mappers"""
 
+import math
+
 mapping = {
     'field_reference_number': 'Nr. 2)',
     'field_kind_product_target_id':'Produkt 3)',
@@ -34,7 +36,8 @@ def get_or_blank(data, key):
     Returns '' for 0
     Otherwise: value
     '''
-    if data.get(key) == 0:
+    date = data.get(key)
+    if date is None or (not isinstance(date, str) and (math.isnan(date) or date == 0)):
         return ''
     return data.get(key)
 
