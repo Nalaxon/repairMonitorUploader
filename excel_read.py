@@ -20,7 +20,15 @@ class ExcelReader:
         self.lang_specific = config.get_lang_specific(config.LANG)
         self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1)
         self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
-        self.repair_date = config.REPAIR_DATE
+        if config.REPAIR_DATE is not None:
+            self.repair_date = config.REPAIR_DATE
+        else:
+            row = config.REPAIR_DATE_POSITION['row']
+            column = config.REPAIR_DATE_POSITION['column']
+            repair_date = pd.read_excel(config.DATA_FILE_PATH, dtype=str, keep_default_na=False).iat[row-2, column-1]
+            self.repair_date = repair_date[:10]
+        print('Repair date: ' + str(self.repair_date))
+  
         self.operation = config.OPERATION
 
     def generate_json(self, get_page_data):
