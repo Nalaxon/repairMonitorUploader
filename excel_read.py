@@ -34,7 +34,7 @@ class ExcelReader:
     def generate_json(self, get_page_data):
         ''' Returns repair monitor format aka json form blob '''
         for _, row in self.df.iterrows():
-            page_data = get_page_data(self.lang)
+            page_data = get_page_data()
             template_op = self.lang_specific[self.operation]
             template_date = self.repair_date
 
