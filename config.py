@@ -7,15 +7,15 @@ import sys
 LANG = 'de'
 # Cell of REPAIR Date with Date Format(!), keep REPAIR_DATE = None if using this one
 REPAIR_DATE_POSITION = {'column': 6, 'row':3}
-# Start line from which to start consume data, set to None if you want to process whole file
+# Start line (inlcuding) from which to start consume data, set to None if you want to process whole file
 PROCESS_FILE_START = None
-# End line until to consume data. If None and PROCESS_FILE_START ist set, only a this single line will be consumed
+# End line (including) until to consume data. If None and PROCESS_FILE_START ist set, only a this single line will be consumed
 PROCESS_FILE_END = None
 
 # time when repaire cafe took place, keept that 'None' if you use REPAIR_DATE_POSITION (please not the format: YYYY-MM-DD, e.g.: '2024-10-02')
 REPAIR_DATE = None
 # file you want to upload (expects full path if not in same folder
-DATA_FILE_PATH = 'RepMon -DatenSource.xlsx'
+DATA_FILE_PATH = 'RepMon -DatenSource2.xlsx'
 # in excel file header starts in line skip_header
 EXCEL_SKIP_HEADER=9
 # save your excel into draft so you can review what the uploader created
@@ -50,9 +50,9 @@ if REPAIR_DATE is not None and ('column' in REPAIR_DATE_POSITION or 'row' in REP
     print("Invalid config: Either use REPAIR_DATE to set a date, or use REPAIR_DATE_POSITION to specify the date within excel file")
     sys.exit(INVALID_CONFIG)
 
-if PROCESS_FILE_START is not None and PROCESS_FILE_START is not PROCESS_FILE_END:
+if PROCESS_FILE_START is not None and PROCESS_FILE_END is None:
     print('PROCESS_FILE_END wasn\'t will only consume one line!')
-    PROCESS_FILE_END = PROCESS_FILE_START + 1
+    PROCESS_FILE_END = PROCESS_FILE_START
 
 
 def get_lang_specific(lang):

@@ -14,7 +14,7 @@ def parse_upload_query(date):
     repair_date = date['field_repair_date[0][value]']
     repair_date_list = repair_date.split('-')
     ref_number = date['field_reference_number[0][value]']
-    return f'{repair_date[:4]}_{repair_date_list[1:3]}_{ref_number}'
+    return f'{repair_date[:4]}_{repair_date_list[1] + repair_date_list[2]}_{ref_number}'
 
 
 def try_(respone_data, expected_status_code = 200):
@@ -158,18 +158,20 @@ class Repairmonitor:
             print('Upload finished without errors. :)')
             return True
 
-        print(f'Upload finsihed with {len(self.uploads) - uploaded} missing uploads')
+        print(f'Upload finsihed with {len(self.uploads) - uploaded} not uploaded')
 
         #Determine wich refs are issing
         drafts_overview_page = self.get_draft_overview_page_data()
-        processed_dates = list(set(x[:7] for x in self.uploads))
+        processed_dates = list(set(x[:9] for x in self.uploads))
+
         uploaded_results = set(x for x in
                                re.findall(r'\d_(\d+_\d+_\d+) |',
                                           drafts_overview_page)
-                                          if x[:7] in processed_dates)
+                                          if x[:9] in processed_dates)
 
         missings_refs = set(self.uploads) - uploaded_results
         print(f'They are missing: {missings_refs}')
+        print('If the above list is empty but something was not uploaded, it was already uploaded before')
         return False
 
 
