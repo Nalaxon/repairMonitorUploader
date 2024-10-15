@@ -20,8 +20,12 @@ class ExcelReader:
         self.lang_specific = config.get_lang_specific(config.LANG)
         self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1)
         self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
-        self.loop_start = config.PROCESS_FILE_START - config.EXCEL_SKIP_HEADER -1
-        self.loop_end = config.PROCESS_FILE_END - config.EXCEL_SKIP_HEADER -1
+        self.loop_start = config.PROCESS_FILE_START
+        if config.PROCESS_FILE_START is not None:
+            self.loop_start -= config.EXCEL_SKIP_HEADER -1
+        self.loop_end = config.PROCESS_FILE_END
+        if config.PROCESS_FILE_END is not None:
+            self.loop_end -= config.EXCEL_SKIP_HEADER -1
         if config.REPAIR_DATE is not None:
             self.repair_date = config.REPAIR_DATE
         else:
@@ -37,12 +41,13 @@ class ExcelReader:
         ''' Returns repair monitor format aka json form blob '''
         for i, row in self.df.iterrows():
 
-            print(f'generate_json: {i} : {self.loop_start} - {self.loop_end}')
+            
             if self.loop_start is not None and i < self.loop_start -1:
                 continue
-            if i == self.loop_end-1:
+            if self.loop_end is not None and i == self.loop_end-1:
                 break
 
+            print(f'generate_json: {i} : {self.loop_start} - {self.loop_end}')
             page_data = get_page_data()
             template_op = self.lang_specific[self.operation]
             template_date = self.repair_date

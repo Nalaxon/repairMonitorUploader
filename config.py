@@ -8,7 +8,7 @@ LANG = 'de'
 # Cell of REPAIR Date with Date Format(!), keep REPAIR_DATE = None if using this one
 REPAIR_DATE_POSITION = {'column': 6, 'row':3}
 # Start line from which to start consume data, set to None if you want to process whole file
-PROCESS_FILE_START = 37
+PROCESS_FILE_START = None
 # End line until to consume data. If None and PROCESS_FILE_START ist set, only a this single line will be consumed
 PROCESS_FILE_END = None
 
