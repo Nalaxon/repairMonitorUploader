@@ -1,9 +1,7 @@
 """" Interaction with repair monitor """
 
-import sys
 import requests
 from lxml import html
-import yaml
 import re
 
 # Uncomment if you need to log your requests
@@ -56,14 +54,12 @@ class Repairmonitor:
         user = ''
 
         with open(".credentials/auth.yml", 'r', encoding="utf-8") as stream:
-            try:
-                credentials = yaml.safe_load(stream)
-                password = credentials['password']
-                user = credentials['user']
-            except yaml.YAMLError as exc:
-                print('Could not read .credentials/auth.yml!\n' + exc)
-                sys.exit(1)
-
+            lines = stream.readlines()
+            for line in lines:
+                if line.startswith('password:'):
+                    password = line.split(':')[1].lstrip()
+                if line.startswith('user:'):
+                    user = line.split(':')[1].lstrip()
         payload = {
             'name':user,
             'pass':password,
