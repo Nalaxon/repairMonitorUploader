@@ -20,9 +20,9 @@ class ExcelReader:
         self.lang_specific = config.get_lang_specific(config.LANG)
         self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1)
         self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
-        self.loop_start = config.PROCESS_FILE_START -1
+        self.loop_start = config.PROCESS_FILE_START
         if config.PROCESS_FILE_START is not None:
-            self.loop_start -= config.EXCEL_SKIP_HEADER -1
+            self.loop_start -= config.EXCEL_SKIP_HEADER
         self.loop_end = config.PROCESS_FILE_END
         if config.PROCESS_FILE_END is not None:
             self.loop_end -= config.EXCEL_SKIP_HEADER -1
