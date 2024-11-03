@@ -85,3 +85,9 @@ def field_repair_information_adapter(row_data, lang):
         }
     }
     return data_source.get(lang).get(row_data)
+
+def get_column_row(date):
+    ''' Returns column and row for excel cell '''
+    if date is None:
+        return (None, None)
+    return (date['column'], date['row'])

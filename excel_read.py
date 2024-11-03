@@ -20,34 +20,41 @@ class ExcelReader:
         self.lang_specific = config.get_lang_specific(config.LANG)
         self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1)
         self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
-        self.loop_start = config.PROCESS_FILE_START
-        if config.PROCESS_FILE_START is not None:
-            self.loop_start -= config.EXCEL_SKIP_HEADER
-        self.loop_end = config.PROCESS_FILE_END
-        if config.PROCESS_FILE_END is not None:
-            self.loop_end -= config.EXCEL_SKIP_HEADER -1
+        peek = pd.read_excel(config.DATA_FILE_PATH, dtype=str, keep_default_na=False)
+
         if config.REPAIR_DATE is not None:
             self.repair_date = config.REPAIR_DATE
         else:
-            row = config.REPAIR_DATE_POSITION['row']
-            column = config.REPAIR_DATE_POSITION['column']
-            repair_date = pd.read_excel(config.DATA_FILE_PATH, dtype=str, keep_default_na=False).iat[row-2, column-1]
+            #row = config.REPAIR_DATE_POSITION['row']
+            #column = config.REPAIR_DATE_POSITION['column']
+            column, row = ea.get_column_row(config.REPAIR_DATE_POSITION)
+            repair_date = peek.iat[row-2, column-1]
             self.repair_date = repair_date[:10]
         print('Repair date: ' + str(self.repair_date))
+        self.loop_start = None
+        self.loop_end = None
+        if (config.PROCESS_FILE_START_POSITION is not None):
+            start_column, start_row = ea.get_column_row(config.PROCESS_FILE_START_POSITION)
+            self.loop_start = int(peek.iat[start_row-2, start_column-1]) - config.EXCEL_DATA_START +1
+
+        if (config.PROCESS_FILE_NUMBER_POSITION is not None and self.loop_start != -config.EXCEL_DATA_START):
+            amount_column, amount_row = ea.get_column_row(config.PROCESS_FILE_NUMBER_POSITION)
+            amount = int(peek.iat[amount_row-2, amount_column-1])
+            self.loop_end = self.loop_start + amount
   
         self.operation = config.OPERATION
+
+    
 
     def generate_json(self, get_page_data):
         ''' Returns repair monitor format aka json form blob '''
         for i, row in self.df.iterrows():
-
-            
-            if self.loop_start is not None and i < self.loop_start -1:
+            print(f'generate_json i:{i}:{self.loop_start}:{self.loop_end-1 if self.loop_end is not None else -1}')
+            if self.loop_start is not None and i < self.loop_start:
                 continue
-            if self.loop_end is not None and i == self.loop_end-1:
+            if self.loop_end is not None and i == self.loop_end:
                 break
 
-            print(f'generate_json: {i} : {self.loop_start} - {self.loop_end}')
             page_data = get_page_data()
             template_op = self.lang_specific[self.operation]
             template_date = self.repair_date

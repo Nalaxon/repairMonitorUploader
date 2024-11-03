@@ -11,6 +11,7 @@ import auth
 
 def parse_upload_query(date):
     repair_date = date['field_repair_date[0][value]']
+    print(repair_date)
     repair_date_list = repair_date.split('-')
     ref_number = date['field_reference_number[0][value]']
     return f'{repair_date[:4]}_{repair_date_list[1] + repair_date_list[2]}_{ref_number}'
