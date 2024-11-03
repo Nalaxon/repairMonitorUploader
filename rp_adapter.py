@@ -3,6 +3,7 @@
 import requests
 from lxml import html
 import re
+import auth
 
 # Uncomment if you need to log your requests
 # import http.client as http_client
@@ -50,16 +51,10 @@ class Repairmonitor:
         self.session = requests.Session()
         tree = self.get_page_tree('https://www.repairmonitor.org/')
         secrete = tree.xpath('//input[@name="form_build_id"]/@value')[0]
-        password = ''
-        user = ''
+        
+        password = auth.PASSWORD
+        user = auth.USER
 
-        with open(".credentials/auth.yml", 'r', encoding="utf-8") as stream:
-            lines = stream.readlines()
-            for line in lines:
-                if line.startswith('password:'):
-                    password = line.split(':')[1].lstrip()
-                if line.startswith('user:'):
-                    user = line.split(':')[1].lstrip()
         payload = {
             'name':user,
             'pass':password,

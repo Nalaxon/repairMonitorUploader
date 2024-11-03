@@ -12,11 +12,11 @@ In order to make upload.bat work you have to make sure that python and pipenv is
 
 
 
-## auth.yml example
-This is how the `.credentials/auth.yml` should look like if your username is `My Repair Café` and your password is `aVerySecretPassword`:
+## auth.py example
+This is how the `auth.py` should look like if your username is `My Repair Café` and your password is `aVerySecretPassword`:
 ```
-password: aVerySecretPassword
-user: My Repair Café
+PASSWORD='aVerySecretPassword'
+USER='My Repair Café'
 ```
 
 ## Adopt mapping
