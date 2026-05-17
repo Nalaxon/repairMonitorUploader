@@ -16,7 +16,7 @@ mapping = {
     'field_solution':'Maßnahmen 12)',
     'field_repair_source':'InfoLink',
     'field_hint':'Tipp für andere Reparateure 15)',
-    'field_repairability':'',
+    'field_repairability':'Note',
     'field_repair_information_resourc':'Info-Quelle',
     'field_repair_failed':'Erfolglos',
     'field_repair_information':' Infos verwendet'
