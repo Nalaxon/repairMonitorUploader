@@ -27,9 +27,10 @@ def get_or_none(data, key):
     Returns None for 0
     Otherwise: value
     '''
-    if data.get(key) == 0:
+    date = data.get(key)
+    if date is None or math.isnan(date) or date == 0:
         return None
-    return data.get(key)
+    return date
 
 def get_or_blank(data, key):
     '''
@@ -40,6 +41,17 @@ def get_or_blank(data, key):
     if date is None or (not isinstance(date, str) and (math.isnan(date) or date == 0)):
         return ''
     return data.get(key)
+
+def cast_int_or_none(value):
+    '''
+    Returns '' for ''
+    Otherwise: int(value)
+    '''
+    if value is None or str(value) == '':
+        return None
+    
+    return int(value)
+
 
 def product_repaired_from_key(key):
     '''

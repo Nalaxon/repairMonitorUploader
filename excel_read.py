@@ -90,7 +90,7 @@ class ExcelReader:
                 'field_solution[0][value]':ea.get_or_blank(row,mapping['field_solution']), #'',
                 #'_none'
                 'field_repair_failed':ea.field_repair_failed_adapter(page_data['field_repair_failed'], ea.get_or_none(row,mapping['field_repair_failed']), '_none'),
-                'field_repairability':ea.cast_int_or_blank(ea.get_or_blank(row, mapping['field_repairability'])),
+                'field_repairability':ea.cast_int_or_none(ea.get_or_none(row, mapping['field_repairability'])),
                 'field_advice[0][value]':'',
                 'field_repair_information':ea.field_repair_information_adapter(row[mapping['field_repair_information']], self.lang),
                 'field_repair_source[0][value]':ea.get_or_blank(row,mapping['field_repair_source']), #'',
