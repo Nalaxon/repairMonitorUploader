@@ -18,10 +18,9 @@ class ExcelReader:
         self.df = None
         self.lang = config.LANG
         self.lang_specific = config.get_lang_specific(config.LANG)
-        # read file reversed
-        self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1, index_col=1)[::-1]
-        self.df = self.df[self.df.index.notna()]
-        peek = pd.read_excel(config.DATA_FILE_PATH, dtype=str, keep_default_na=False, nrows=6)
+        self.df = pd.read_excel(config.DATA_FILE_PATH, header=config.EXCEL_SKIP_HEADER -1)
+        self.df = self.df.dropna(subset=[mapping.get('field_reference_number')])
+        peek = pd.read_excel(config.DATA_FILE_PATH, dtype=str, keep_default_na=False)
 
         if config.REPAIR_DATE is not None:
             self.repair_date = config.REPAIR_DATE
@@ -34,19 +33,15 @@ class ExcelReader:
         print('Repair date: ' + str(self.repair_date))
         self.loop_start = None
         self.loop_end = None
-        if config.PROCESS_FILE_START_POSITION is not None:
+        if (config.PROCESS_FILE_START_POSITION is not None):
             start_column, start_row = ea.get_column_row(config.PROCESS_FILE_START_POSITION)
-            self.loop_start = int(peek.iat[start_row-2, start_column-1])
-            self.loop_start = int(peek.iat[3, 10]);
+            self.loop_start = int(peek.iat[start_row-2, start_column-1]) - config.EXCEL_DATA_START +1
 
-        if config.PROCESS_FILE_NUMBER_POSITION is not None and self.loop_start is not None:
+        if (config.PROCESS_FILE_NUMBER_POSITION is not None and self.loop_start != -config.EXCEL_DATA_START):
             amount_column, amount_row = ea.get_column_row(config.PROCESS_FILE_NUMBER_POSITION)
             amount = int(peek.iat[amount_row-2, amount_column-1])
-            self.loop_end = int(self.loop_start + amount)
-            available = int(((self.df.index <= self.loop_start) & (self.df.index > self.loop_end)).sum())                                                       
-            if available < amount:                                                                                                                              
-                print(f'Warning: only {available} of {amount} requested rows available after filtering empty reference numbers')
-
+            self.loop_end = self.loop_start + amount
+  
         self.operation = config.OPERATION
 
     
@@ -55,7 +50,6 @@ class ExcelReader:
         ''' Returns repair monitor format aka json form blob '''
         for i, row in self.df.iterrows():
             print(f'generate_json i:{i}:{self.loop_start}:{self.loop_end-1 if self.loop_end is not None else -1}')
-            #print(row)
             if self.loop_start is not None and i < self.loop_start:
                 continue
             if self.loop_end is not None and i == self.loop_end:
@@ -73,7 +67,7 @@ class ExcelReader:
                 #'dkg-qmxcaZptzt25m8VjSjEU4yDB4xYL7w10zYnjyEM,
                 'form_token': page_data['form_token'],
                 'form_id':'node_repair_form',
-                'field_reference_number[0][value]':int(row.name), #1,
+                'field_reference_number[0][value]':int(row[mapping['field_reference_number']]), #1,
                 #'Battery+tester',
                 'field_kind_product[0][target_id]':row[mapping['field_kind_product_target_id']],
                 'field_kind_product[0][kp_other]':'',
